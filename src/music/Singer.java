@@ -48,7 +48,7 @@ public class Singer extends Thread {
             }
         }
     }
-    
+ 
     public String getSingerName() {
         return singerName;
     }
