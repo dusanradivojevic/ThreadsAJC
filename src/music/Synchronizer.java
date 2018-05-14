@@ -4,6 +4,8 @@
  */
 package music;
 
+import gui.control.Controller;
+
 public class Synchronizer {
     
     private int voiceFlag;
@@ -50,7 +52,8 @@ public class Synchronizer {
     }
     
     private void sing(String lyrics, int delay) {
-        System.out.println(lyrics);
+        Controller.singInGui(lyrics);
+        
         try {
             wait(delay);
         } catch (InterruptedException e) {

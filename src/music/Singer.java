@@ -37,7 +37,7 @@ public class Singer extends Thread {
     }
     
     //synchronized
-    private void sing() {
+    private synchronized void sing() {
         while (!stopAll) {
             if (this.voice == Voice.FIRST && sings) {
                 this.synch.singFirstVoice(performance.getLyrics(), performance.getDelay());
@@ -83,12 +83,12 @@ public class Singer extends Thread {
         this.synch = synch;
     }
 
-	public boolean isSingS() {
+	public boolean isSings() {
 		return sings;
 	}
 
-	public void setSingS(boolean singS) {
-		this.sings = singS;
+	public void setSings(boolean sings) {
+		this.sings = sings;
 	}
 
 }
