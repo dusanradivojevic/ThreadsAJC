@@ -9,46 +9,47 @@ public class Singer extends Thread {
     private String singerName;
     private Voice voice;
     private Performance performance;
+    private boolean sings; //if true specific singer can sing
     
-    private boolean stopIt;
+    private boolean stopAll;
     private Synchronizer synch;
     
-    public Singer(String singerName, Voice voice, Performance performance, boolean stopIt, Synchronizer synch) {
-        super();
-        this.singerName = singerName;
-        this.voice = voice;
-        this.performance = performance;
-        this.stopIt = stopIt;
-        this.synch = synch;
-    }
-
-    public Singer(String singerName, Voice voice, Performance performance, boolean stopIt) {
-        super();
-        this.singerName = singerName;
-        this.voice = voice;
-        this.performance = performance;
-        this.stopIt = stopIt;
-    }
+    public Singer(String singerName, Voice voice, Performance performance, boolean singS, boolean stopAll,
+			Synchronizer synch) {
+    	
+		super();
+		this.singerName = singerName;
+		this.voice = voice;
+		this.performance = performance;
+		this.sings = singS;
+		this.stopAll = stopAll;
+		this.synch = synch;
+	}
     
-    public Singer() {
+	public Singer() {
         super();
     }
+  //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     
     @Override
     public void run() {
         sing();
     }
     
-    private synchronized void sing() {
-        while (!stopIt) {
-            if (this.voice == Voice.FIRST) {
+    //synchronized
+    private void sing() {
+        while (!stopAll) {
+            if (this.voice == Voice.FIRST && sings) {
                 this.synch.singFirstVoice(performance.getLyrics(), performance.getDelay());
-            } else {
+            } else if (this.voice == Voice.SECOND && sings){
                 this.synch.singSecondVoice(performance.getLyrics(), performance.getDelay());
+            } else if (sings){
+            	this.synch.singThirdVoice(performance.getLyrics(), performance.getDelay());
             }
         }
     }
- 
+    
+ //XXXXXXXXXXXXXXXXXXXXXX
     public String getSingerName() {
         return singerName;
     }
@@ -67,11 +68,11 @@ public class Singer extends Thread {
     public void setPerformance(Performance performance) {
         this.performance = performance;
     }
-    public boolean isStopIt() {
-        return stopIt;
+    public boolean isStopAll() {
+        return stopAll;
     }
-    public void setStopIt(boolean stopIt) {
-        this.stopIt = stopIt;
+    public void setStopAll(boolean stopIt) {
+        this.stopAll = stopIt;
     }
 
     public Synchronizer getSynch() {
@@ -81,6 +82,14 @@ public class Singer extends Thread {
     public void setSynch(Synchronizer synch) {
         this.synch = synch;
     }
+
+	public boolean isSingS() {
+		return sings;
+	}
+
+	public void setSingS(boolean singS) {
+		this.sings = singS;
+	}
 
 }
 

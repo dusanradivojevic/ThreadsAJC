@@ -17,19 +17,24 @@ public class Test {
     
     private Singer pattiSmith;
     private Singer bruceSpringsteen;
+    private Singer chorus;
     
     private void initializeSingingInThreads() {
         String lyrics1 = "Because the night";
         String lyrics2 = "Belongs to lovers";
+        String lyrics3 = "Take my hand as the sun descends";
         
+        boolean sings = true; //add as param?
         boolean stopIt = false;
-        Synchronizer synch = new Synchronizer(true);
+        Synchronizer synch = new Synchronizer(1);
         
-        Performance firstVoicePerformance = new Performance(lyrics1, 1500);
-        Performance secondVoicePerformance = new Performance(lyrics2, 1500);
+        Performance firstVoicePerformance = new Performance(lyrics1, 2000);
+        Performance secondVoicePerformance = new Performance(lyrics2, 2000);
+        Performance thirdVoicePerformance = new Performance(lyrics3, 2000);
         
-        pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopIt, synch);
-        bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopIt, synch);
+        pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, sings, stopIt, synch);
+        bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, sings, stopIt, synch);
+        chorus = new Singer("Chorus", Voice.BACKGROUND, thirdVoicePerformance, sings, stopIt, synch);
     }
     
     public void testSingInThreads() {
@@ -38,10 +43,12 @@ public class Test {
         
         pattiSmith.start();
         bruceSpringsteen.start();
+        chorus.start();
         
         IN.nextLine();
-        pattiSmith.setStopIt(true);
-        bruceSpringsteen.setStopIt(true);
+        pattiSmith.setStopAll(true);
+        bruceSpringsteen.setStopAll(true);
+        chorus.setStopAll(true);
         
     }    
     
