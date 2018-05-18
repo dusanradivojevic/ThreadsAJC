@@ -9,19 +9,17 @@ public class Singer extends Thread {
     private String singerName;
     private Voice voice;
     private Performance performance;
-    private boolean sings; //if true specific singer can sing
     
     private boolean stopAll;
     private Synchronizer synch;
     
-    public Singer(String singerName, Voice voice, Performance performance, boolean singS, boolean stopAll,
+    public Singer(String singerName, Voice voice, Performance performance, boolean stopAll,
 			Synchronizer synch) {
     	
 		super();
 		this.singerName = singerName;
 		this.voice = voice;
 		this.performance = performance;
-		this.sings = singS;
 		this.stopAll = stopAll;
 		this.synch = synch;
 	}
@@ -39,17 +37,17 @@ public class Singer extends Thread {
     //synchronized
     private synchronized void sing() {
         while (!stopAll) {
-            if (this.voice == Voice.FIRST && sings) {
+            if (this.voice == Voice.FIRST) {
                 this.synch.singFirstVoice(performance.getLyrics(), performance.getDelay());
-            } else if (this.voice == Voice.SECOND && sings){
+            } else if (this.voice == Voice.SECOND){
                 this.synch.singSecondVoice(performance.getLyrics(), performance.getDelay());
-            } else if (sings){
+            } else {
             	this.synch.singThirdVoice(performance.getLyrics(), performance.getDelay());
             }
         }
     }
     
- //XXXXXXXXXXXXXXXXXXXXXX
+ //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     public String getSingerName() {
         return singerName;
     }
@@ -82,14 +80,6 @@ public class Singer extends Thread {
     public void setSynch(Synchronizer synch) {
         this.synch = synch;
     }
-
-	public boolean isSings() {
-		return sings;
-	}
-
-	public void setSings(boolean sings) {
-		this.sings = sings;
-	}
 
 }
 

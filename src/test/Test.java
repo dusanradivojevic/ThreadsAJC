@@ -14,23 +14,24 @@ public class Test {
 	private Singer pattiSmith;
 	private Singer bruceSpringsteen;
 	private Singer chorus;
+	
+	private Synchronizer synch;
 
 	public void initializeSingingInThreads() {
 		String lyrics1 = "Because the night\n";
 		String lyrics2 = "Belongs to lovers\n";
 		String lyrics3 = "Take my hand as the sun descends\n";
 
-		boolean sings = true;
 		boolean stopAll = false;
-		Synchronizer synch = new Synchronizer(1);
+		synch = new Synchronizer(true, false, false);
 
-		Performance firstVoicePerformance = new Performance(lyrics1, 2000);
-		Performance secondVoicePerformance = new Performance(lyrics2, 2000);
-		Performance thirdVoicePerformance = new Performance(lyrics3, 2000);
+		Performance firstVoicePerformance = new Performance(lyrics1, 1500);
+		Performance secondVoicePerformance = new Performance(lyrics2, 1500);
+		Performance thirdVoicePerformance = new Performance(lyrics3, 1500);
 
-		pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, sings, stopAll, synch);
-		bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, sings, stopAll, synch);
-		chorus = new Singer("Chorus", Voice.BACKGROUND, thirdVoicePerformance, sings, stopAll, synch);
+		pattiSmith = new Singer("Patti Smith", Voice.FIRST, firstVoicePerformance, stopAll, synch);
+		bruceSpringsteen = new Singer("Bruce Springsteen", Voice.SECOND, secondVoicePerformance, stopAll, synch);
+		chorus = new Singer("Chorus", Voice.BACKGROUND, thirdVoicePerformance, stopAll, synch);
 	}
 
 	private void startAllSingers() {
@@ -78,6 +79,10 @@ public class Test {
 		default:
 			return chorus;
 		}
+	}
+
+	public Synchronizer getSynch() {
+		return synch;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

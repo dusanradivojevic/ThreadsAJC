@@ -41,36 +41,58 @@ public class Controller {
 	}
 //////////////////////////////////////////
 
-	public static void playFirst() {
+	public static synchronized void playFirst() {
 		
-		t.getSinger(1).setSings(true);
-//		t.getSinger(1).start();
+			try {
+				t.startSinger(1);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
 
-	public static void stopFirst() {
+	public static synchronized void stopFirst() {
 		
-		t.getSinger(1).setSings(false);
+	//	t.getSinger(1).setSings(false);
+		t.getSinger(1).setStopAll(true);
 	}
 //////////////////////////////////////////
 	public static void playSecond() {
 		
-		t.getSinger(2).setSings(true);
+	//	t.getSinger(2).setSings(true);
+		
+		try {
+			t.startSinger(2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void stopSecond() {
 
-		t.getSinger(2).setSings(false);
+	//	t.getSinger(2).setSings(false);
+		t.getSinger(2).setStopAll(true);
 	}
 //////////////////////////////////////////
 
 	public static void playThird() {
 
-		t.getSinger(3).setSings(true);
+	//	t.getSinger(3).setSings(true);
+		
+		try {
+			t.startSinger(3);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void stopThird() {
 
-		t.getSinger(3).setSings(false);
+	//	t.getSinger(3).setSings(false);
+		t.getSinger(3).setStopAll(true);
 	}
 //////////////////////////////////////////
 
