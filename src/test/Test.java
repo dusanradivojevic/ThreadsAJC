@@ -23,7 +23,7 @@ public class Test {
 		String lyrics3 = "Take my hand as the sun descends\n";
 
 		boolean stopAll = false;
-		synch = new Synchronizer(true, false, false);
+		synch = new Synchronizer(false, false, false);
 
 		Performance firstVoicePerformance = new Performance(lyrics1, 1500);
 		Performance secondVoicePerformance = new Performance(lyrics2, 1500);

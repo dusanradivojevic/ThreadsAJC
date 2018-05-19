@@ -11,12 +11,16 @@ public class Synchronizer {
 	private boolean firstVoiceFlag;
 	private boolean secondVoiceFlag;
 	private boolean thirdVoiceFlag;
-
+	
+	private String voices;
+	
 	public Synchronizer(boolean firstVoiceFlag, boolean secondVoiceFlag, boolean thirdVoiceFlag) {
 		super();
 		this.firstVoiceFlag = firstVoiceFlag;
 		this.secondVoiceFlag = secondVoiceFlag;
 		this.thirdVoiceFlag = thirdVoiceFlag;
+		
+		this.voices = "";
 	}
 
 	public synchronized void singFirstVoice(String lyrics, int delay) {
@@ -65,19 +69,52 @@ public class Synchronizer {
 			e.printStackTrace();
 		}
 
-		if (firstVoiceFlag) {
-			firstVoiceFlag = !firstVoiceFlag;
-			secondVoiceFlag = !secondVoiceFlag;
-		} else if (secondVoiceFlag) {
-			secondVoiceFlag = !secondVoiceFlag;
-			thirdVoiceFlag = !thirdVoiceFlag;
-		} else {
-			thirdVoiceFlag = !thirdVoiceFlag;
-			firstVoiceFlag = !firstVoiceFlag;
+		if (voices.length() == 3) {
+			
+			if (firstVoiceFlag) {
+				firstVoiceFlag = !firstVoiceFlag;
+				secondVoiceFlag = !secondVoiceFlag;
+			} else if (secondVoiceFlag) {
+				secondVoiceFlag = !secondVoiceFlag;
+				thirdVoiceFlag = !thirdVoiceFlag;
+			} else {
+				thirdVoiceFlag = !thirdVoiceFlag;
+				firstVoiceFlag = !firstVoiceFlag;
+			}
+			
+			notifyAll();
+			
+		} else if (voices.length() == 2) {
+			
+			if (voices.contains("1") && voices.contains("2")) {
+				firstVoiceFlag = !firstVoiceFlag;
+				secondVoiceFlag = !secondVoiceFlag;
+				
+				notifyAll();
+				return;
+			}
+			
+			if (voices.contains("1") && voices.contains("3")) {
+				firstVoiceFlag = !firstVoiceFlag;
+				thirdVoiceFlag = !thirdVoiceFlag;
+				
+				notifyAll();
+				return;
+			}
+			
+			if (voices.contains("2") && voices.contains("3")) {
+				secondVoiceFlag = !secondVoiceFlag;
+				thirdVoiceFlag = !thirdVoiceFlag;
+				
+				notifyAll();
+				return;
+			}
+			
+		} else if (voices.length() == 1) {
+			// no need for changes
+			
+			notifyAll();
 		}
-		// promena flegova
-
-		notifyAll();
 	}
 
 	public boolean isFirstVoiceFlag() {
@@ -102,6 +139,14 @@ public class Synchronizer {
 
 	public void setThirdVoiceFlag(boolean thirdVoiceFlag) {
 		this.thirdVoiceFlag = thirdVoiceFlag;
+	}
+
+	public String getVoices() {
+		return voices;
+	}
+
+	public void setVoices(String voices) {
+		this.voices = voices;
 	}
 
 }

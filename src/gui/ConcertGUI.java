@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import gui.control.Controller;
+import music.Synchronizer;
+import test.WaitThread;
 
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -18,11 +20,14 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle.Control;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ButtonGroup;
 import java.awt.ComponentOrientation;
 import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.Dimension;
 
 public class ConcertGUI extends JFrame {
 
@@ -30,10 +35,12 @@ public class ConcertGUI extends JFrame {
 	public JTextArea tx;
 	private final JScrollPane scrollPane = new JScrollPane();
 	
-	private JButton btnNewButton = new JButton("Play all");
+	private JButton btnPlayAll = new JButton("Play all");
 	private JButton btnPlayFirstVoice = new JButton("First voice");
 	private JButton btnPlaySecondVoice = new JButton("Second voice");
 	private JButton btnThirdVoice = new JButton("Third voice");
+	
+	private Synchronizer s = Controller.t.getSynch();
 
 	/**
 	 * Create the frame.
@@ -51,12 +58,12 @@ public class ConcertGUI extends JFrame {
 		contentPane.setLayout(null);
 		
 //		JButton btnNewButton = new JButton("Play all");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnPlayAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 		//		playAllBtn = btnNewButton;
 				
 				tx.setText(null);
-				btnNewButton.setEnabled(false);
+				btnPlayAll.setEnabled(false);
 				
 				if (btnPlayFirstVoice != null)
 					btnPlayFirstVoice.setEnabled(false);
@@ -67,24 +74,35 @@ public class ConcertGUI extends JFrame {
 				if (btnThirdVoice != null)
 					btnThirdVoice.setEnabled(false);
 				
+				s.setVoices("123");
+				
 				Controller.initializeThreads();
 			}
 		});
-		btnNewButton.setFont(new Font("Arial", Font.PLAIN, 12));
-		btnNewButton.setBounds(312, 178, 89, 35);
-		contentPane.add(btnNewButton);
+		btnPlayAll.setFont(new Font("Arial", Font.PLAIN, 12));
+		btnPlayAll.setBounds(312, 178, 89, 35);
+		contentPane.add(btnPlayAll);
 		
 		JButton btnStop = new JButton("Stop all");
+		btnStop.setActionCommand("Stop all");
+		btnStop.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnStop.setPreferredSize(new Dimension(89, 23));
+		btnStop.setMaximumSize(new Dimension(89, 23));
+		btnStop.setBounds(new Rectangle(0, 0, 89, 39));
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				Controller.abortAll();
+//				Controller.abortAll();		
+				s.setVoices("");
+				
 				Controller.t.getSinger(1).setStopAll(true);
 				Controller.t.getSinger(2).setStopAll(true);
 				Controller.t.getSinger(3).setStopAll(true);
 				
 				Controller.t.initializeSingingInThreads();
 				
-				btnNewButton.setEnabled(true);
+				s = Controller.t.getSynch();
+				
+				btnPlayAll.setEnabled(true);
 				btnPlayFirstVoice.setEnabled(true);
 				btnPlaySecondVoice.setEnabled(true);
 				btnThirdVoice.setEnabled(true);
@@ -98,8 +116,18 @@ public class ConcertGUI extends JFrame {
 		btnPlayFirstVoice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				if(s.isSecondVoiceFlag())
+					s.setSecondVoiceFlag(false);
+				
+				if(s.isThirdVoiceFlag())
+					s.setThirdVoiceFlag(false);
+				
+				s.setFirstVoiceFlag(true);
+				
+				s.setVoices(s.getVoices() + "1");
+				
 				btnPlayFirstVoice.setEnabled(false);
-				btnNewButton.setEnabled(false);
+				btnPlayAll.setEnabled(false);
 				
 				Controller.playFirst();
 			}
@@ -110,7 +138,31 @@ public class ConcertGUI extends JFrame {
 		
 		JButton btnStopFirstVoice = new JButton("First voice");
 		btnStopFirstVoice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
+				s.setFirstVoiceFlag(false);
+				
+				if (!s.getVoices().contains("1")) {
+					return;
+				}
+				
+				String voices = s.getVoices();
+				String t = "";
+				
+				for (int i = 0; i < voices.length(); i++) {
+					if (voices.charAt(i) != '1') 
+						t += voices.charAt(i);
+				}
+				
+				if(!s.isSecondVoiceFlag() && !s.isThirdVoiceFlag()) {
+					if(t.contains("2"))
+						s.setSecondVoiceFlag(true);
+					
+					else if(t.contains("3"))
+						s.setThirdVoiceFlag(true);
+				}
+				
+				s.setVoices(t);
+				
 				Controller.stopFirst();
 			}
 		});
@@ -122,8 +174,18 @@ public class ConcertGUI extends JFrame {
 		btnPlaySecondVoice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				if(s.isFirstVoiceFlag())
+					s.setFirstVoiceFlag(false);
+				
+				if(s.isThirdVoiceFlag())
+					s.setThirdVoiceFlag(false);
+				
+				s.setSecondVoiceFlag(true);
+				
+				s.setVoices(s.getVoices() + "2");
+				
 				btnPlaySecondVoice.setEnabled(false);
-				btnNewButton.setEnabled(false);
+				btnPlayAll.setEnabled(false);
 				
 				Controller.playSecond();
 			}
@@ -135,6 +197,29 @@ public class ConcertGUI extends JFrame {
 		JButton btnSecondVoice = new JButton("Second voice");
 		btnSecondVoice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				s.setSecondVoiceFlag(false);
+				
+				if (!s.getVoices().contains("2"))
+					return;
+				
+				String voices = s.getVoices();
+				String t = "";
+				
+				for (int i = 0; i < voices.length(); i++) {
+					if (voices.charAt(i) != '2')
+						t += voices.charAt(i);
+				}
+				
+				if(!s.isSecondVoiceFlag() && !s.isThirdVoiceFlag()) {
+					if(t.contains("1"))
+						s.setFirstVoiceFlag(true);
+					
+					else if(t.contains("3"))
+						s.setThirdVoiceFlag(true);
+				}
+				
+				s.setVoices(t);
+				
 				Controller.stopSecond();
 			}
 		});
@@ -146,8 +231,18 @@ public class ConcertGUI extends JFrame {
 		btnThirdVoice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				if(s.isFirstVoiceFlag())
+					s.setFirstVoiceFlag(false);
+				
+				if(s.isSecondVoiceFlag())
+					s.setSecondVoiceFlag(false);
+				
+				s.setThirdVoiceFlag(true);
+				
+				s.setVoices(s.getVoices() + "3");
+				
 				btnThirdVoice.setEnabled(false);
-				btnNewButton.setEnabled(false);
+				btnPlayAll.setEnabled(false);
 				
 				Controller.playThird();
 			}
@@ -158,7 +253,30 @@ public class ConcertGUI extends JFrame {
 		
 		JButton btnThirdVoice_1 = new JButton("Third voice");
 		btnThirdVoice_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
+				s.setThirdVoiceFlag(false);
+				
+				if (!s.getVoices().contains("3"))
+					return;
+				
+				String voices = s.getVoices();
+				String t = "";
+				
+				for (int i = 0; i < voices.length(); i++) {
+					if (voices.charAt(i) != '3')
+						t += voices.charAt(i);
+				}
+				
+				if(!s.isSecondVoiceFlag() && !s.isThirdVoiceFlag()) {
+					if(t.contains("2"))
+						s.setSecondVoiceFlag(true);
+					
+					else if(t.contains("1"))
+						s.setFirstVoiceFlag(true);
+				}
+				
+				s.setVoices(t);
+				
 				Controller.stopThird();
 			}
 		});

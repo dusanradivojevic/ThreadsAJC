@@ -14,10 +14,10 @@ public class Controller {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					t.initializeSingingInThreads();
+					
 					Controller.cg = new ConcertGUI();
 					cg.setVisible(true);
-
-					t.initializeSingingInThreads();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -27,6 +27,8 @@ public class Controller {
 
 	public static void initializeThreads() {
 
+		t.getSynch().setFirstVoiceFlag(true);
+		
 		try {
 			t.startSinger(0);
 		} catch (Exception e) {
